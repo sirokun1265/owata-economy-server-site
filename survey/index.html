@@ -14,6 +14,8 @@
   <meta name="twitter:card" content="summary_large_image">
   <title>匿名アドオンアンケート｜OWATA経済サーバー</title>
   <link rel="icon" href="../public/media/owata-logo.png">
+  <link rel="stylesheet" href="../analytics.css">
+  <script src="../analytics.js" data-privacy-url="../privacy.html" defer></script>
   <style>
     :root { color-scheme: light; font-family: "Yu Gothic UI", "Hiragino Kaku Gothic ProN", Meiryo, sans-serif; }
     * { box-sizing: border-box; }
@@ -25,11 +27,13 @@
     .brand span { display: grid; line-height: 1; }
     .brand b { font-size: 15px; letter-spacing: .08em; }
     .brand small { margin-top: 5px; color: #1be54a; font: 700 8px/1 Consolas, monospace; letter-spacing: .14em; }
+    .survey-meta { display: flex; align-items: center; gap: 14px; }
     .privacy { color: #b7c7bd; font-size: 11px; font-weight: 700; }
     .privacy::before { color: #1be54a; content: "●"; margin-right: 7px; }
+    .privacy-link { color: #fff; font-size: 11px; font-weight: 700; text-underline-offset: 3px; }
     iframe { display: block; width: 100%; height: 100%; border: 0; background: #f4f7f5; }
     .fallback { display: none; }
-    @media (max-width: 560px) { body { grid-template-rows: 52px minmax(0, 1fr); } .brand img { width: 34px; height: 34px; } .brand b { font-size: 13px; } .privacy { font-size: 9px; } }
+    @media (max-width: 560px) { body { grid-template-rows: 52px minmax(0, 1fr); } .brand img { width: 34px; height: 34px; } .brand b { font-size: 13px; } .privacy { display: none; } .privacy-link { font-size: 10px; } }
   </style>
 </head>
 <body>
@@ -38,7 +42,7 @@
       <img src="../public/media/owata-logo.png" alt="">
       <span><b>OWATA 経済サーバー</b><small>ANONYMOUS SURVEY</small></span>
     </a>
-    <span class="privacy">名前・メール不要</span>
+    <div class="survey-meta"><span class="privacy">名前・メール不要</span><a class="privacy-link" href="../privacy.html">アクセス解析設定</a></div>
   </header>
   <iframe
     src="https://owata-addon-survey.itoutubasa1265.chatgpt.site/"
