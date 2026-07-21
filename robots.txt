@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://sirokun1265.github.io/owata-economy-server-site/sitemap.xml
+
