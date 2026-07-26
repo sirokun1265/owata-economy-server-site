@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="OWATA経済サーバーのライブマップ。読み込み済みの街と、サーバー稼働中のプレイヤー位置を確認できます。">
+  <meta name="theme-color" content="#071810">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="OWATA サーバーライブマップ">
+  <meta property="og:description" content="街はいま、ここで動いている。OWATA経済サーバーの公開ライブマップ。">
+  <meta property="og:url" content="https://sirokun1265.github.io/owata-economy-server-site/live-map/">
+  <meta property="og:image" content="https://sirokun1265.github.io/owata-economy-server-site/public/media/server-live-map-og.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <title>サーバーライブマップ | OWATA経済サーバー</title>
+  <style>
+    * { box-sizing: border-box; }
+    html, body { width: 100%; height: 100%; margin: 0; overflow: hidden; background: #071810; }
+    body { font-family: "Noto Sans JP", "Yu Gothic", sans-serif; }
+    iframe { position: fixed; inset: 0; z-index: 2; width: 100%; height: 100%; border: 0; background: #071810; }
+    .loading {
+      position: fixed; inset: 0; display: grid; place-items: center; color: #eaffef;
+      background: radial-gradient(circle at 50% 40%, #123929 0, #071810 55%);
+      font-size: 14px; letter-spacing: .12em;
+    }
+    .loading::before {
+      width: 12px; height: 12px; margin-right: 12px; border-radius: 50%;
+      background: #1be54a; box-shadow: 0 0 24px #1be54a; content: ""; display: inline-block;
+    }
+    .fallback {
+      position: fixed; right: 14px; bottom: 12px; z-index: 3; padding: 8px 12px;
+      border: 1px solid rgba(27,229,74,.45); background: rgba(2,20,14,.88);
+      color: #dfffe7; font-size: 11px; text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="loading" aria-hidden="true">LIVE MAP を読み込み中</div>
+  <iframe
+    src="https://owata-server-live-map.itoutubasa1265.chatgpt.site/map"
+    title="OWATA サーバーライブマップ"
+    allow="fullscreen"
+    referrerpolicy="strict-origin-when-cross-origin"
+  ></iframe>
+  <a class="fallback" href="../">OWATA公式サイトへ戻る</a>
+</body>
+</html>
