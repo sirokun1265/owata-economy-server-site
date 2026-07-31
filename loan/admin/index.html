@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="dark">
+  <title>OWATA信用金庫｜運営画面</title>
+  <meta name="robots" content="noindex,nofollow">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; connect-src https://owata-credit.itoutubasa1265.chatgpt.site; img-src 'self' data:; style-src 'self'; script-src 'self'; object-src 'none'; base-uri 'none'; form-action 'self'">
+  <link rel="stylesheet" href="../styles.css">
+</head>
+<body class="admin-body">
+  <header class="site-header">
+    <a class="brand" href="../">
+      <span class="brand-mark brand-logo"><img src="../owata-logo.png" alt=""></span>
+      <span><strong>オワタ経済サーバー</strong><small>借金・返済 運営管理画面</small></span>
+    </a>
+    <a class="ghost-link" href="../">申請ページへ戻る</a>
+  </header>
+
+  <main class="admin-main">
+    <section id="admin-login-card" class="admin-login-card">
+      <p class="eyebrow">ADMIN AUTHENTICATION</p>
+      <h1>運営ログイン</h1>
+      <p>運営パスワードを入力すると、スマホから借金・期限・Minecraft同期状態を確認できます。</p>
+      <form id="admin-login-form" class="form-stack">
+        <label>
+          <span>運営パスワード</span>
+          <input name="password" type="password" autocomplete="current-password" required>
+        </label>
+        <button class="primary-button" type="submit">運営画面を開く <span>→</span></button>
+      </form>
+      <p id="admin-login-message" class="message-box hidden"></p>
+    </section>
+
+    <section id="admin-dashboard" class="hidden">
+      <div class="dashboard-heading">
+        <div>
+          <p class="eyebrow">LOAN CONTROL BOARD</p>
+          <h1>借金管理一覧</h1>
+          <p id="admin-updated-at">更新中</p>
+        </div>
+        <div class="dashboard-actions">
+          <button id="refresh-button" class="ghost-button" type="button">再読み込み</button>
+          <button id="backup-button" class="primary-button compact" type="button">JSON保存</button>
+          <button id="logout-button" class="ghost-button" type="button">ログアウト</button>
+        </div>
+      </div>
+
+      <div class="summary-grid">
+        <article><span>未完了</span><strong id="summary-open">0</strong><small>件</small></article>
+        <article><span>期限超過</span><strong id="summary-overdue">0</strong><small>件</small></article>
+        <article><span>現在総額</span><strong id="summary-amount">0</strong><small>owata</small></article>
+        <article><span>全履歴</span><strong id="summary-all">0</strong><small>件</small></article>
+        <article class="sync-summary"><span>Minecraft入金確認済み</span><strong id="summary-minecraft-confirmed">0</strong><small>件</small></article>
+        <article class="sync-summary attention"><span>同期の要確認</span><strong id="summary-sync-attention">0</strong><small>件</small></article>
+      </div>
+
+      <p class="sync-caution">「同期済み」はMinecraftアドオンから成功応答が返り、処理IDと残高の前後値が保存された場合だけ表示します。</p>
+
+      <div class="table-toolbar">
+        <label>
+          <span>絞り込み</span>
+          <select id="status-filter">
+            <option value="open">未完了のみ</option>
+            <option value="all">すべて</option>
+            <option value="overdue">地下労働対象</option>
+            <option value="pending_disbursement">送金待ち</option>
+            <option value="active">返済期間中</option>
+            <option value="paid">返済完了</option>
+            <option value="reconciliation_required">要確認</option>
+          </select>
+        </label>
+        <label>
+          <span>検索</span>
+          <input id="loan-search" type="search" placeholder="ゲーマータグ・Discord名">
+        </label>
+      </div>
+
+      <div class="loan-table-wrap">
+        <table class="loan-table">
+          <thead>
+            <tr>
+              <th>状態</th>
+              <th>ゲーマータグ</th>
+              <th>Discord名</th>
+              <th>元金</th>
+              <th>現在額</th>
+              <th>Minecraft同期</th>
+              <th>期限</th>
+              <th>残り</th>
+            </tr>
+          </thead>
+          <tbody id="loan-table-body"></tbody>
+        </table>
+        <p id="empty-table-message" class="empty-message hidden">条件に一致する借金はありません。</p>
+      </div>
+      <p id="admin-message" class="message-box hidden"></p>
+    </section>
+  </main>
+  <script src="admin.js" defer></script>
+</body>
+</html>
