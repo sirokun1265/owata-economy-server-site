@@ -8,7 +8,7 @@ const state = {
   loan: null,
   terms: {
     minimumLoanAmount: 1,
-    maximumLoanAmount: 10000000,
+    maximumLoanAmount: 1000,
     interestPercentPerDay: 5,
     interestAccrualDays: 20,
     dueDays: 20,
