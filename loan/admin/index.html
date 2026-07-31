@@ -89,6 +89,7 @@
               <th>Minecraft同期</th>
               <th>期限</th>
               <th>残り</th>
+              <th>運営操作</th>
             </tr>
           </thead>
           <tbody id="loan-table-body"></tbody>
@@ -98,6 +99,44 @@
       <p id="admin-message" class="message-box hidden"></p>
     </section>
   </main>
+
+  <dialog id="loan-action-dialog" class="loan-action-dialog">
+    <form id="loan-action-form" method="dialog">
+      <button id="loan-action-close" class="dialog-close" type="button" aria-label="閉じる">×</button>
+      <p id="loan-action-eyebrow" class="eyebrow">ADMIN ACTION</p>
+      <h2 id="loan-action-title">借金を調整</h2>
+      <div class="action-target">
+        <span id="loan-action-gamertag">ゲーマータグ</span>
+        <strong id="loan-action-current">0 owata</strong>
+      </div>
+
+      <div id="reduction-fields" class="form-stack hidden">
+        <label>
+          <span>減額後の返済必要額</span>
+          <input id="reduction-new-amount" name="newAmount" type="number" inputmode="numeric" min="1" step="1">
+        </label>
+        <p class="dialog-note">現在額より小さい金額を入力してください。通常の利息はその後も日ごとに加算されます。</p>
+      </div>
+
+      <div id="deletion-fields" class="form-stack hidden">
+        <label>
+          <span>確認のためゲーマータグを入力</span>
+          <input id="deletion-confirm-gamertag" name="confirmGamertag" type="text" autocomplete="off">
+        </label>
+        <p class="dialog-warning">削除すると参加者の未返済借金から外れます。元の情報と操作理由は監査履歴へ保存されます。</p>
+      </div>
+
+      <label class="dialog-reason">
+        <span>操作理由</span>
+        <textarea id="loan-action-reason" name="reason" rows="3" maxlength="200" placeholder="例：運営への功労による減額／ゲーマータグの入力間違い" required></textarea>
+      </label>
+      <p id="loan-action-error" class="message-box hidden"></p>
+      <div class="dialog-actions">
+        <button id="loan-action-cancel" class="ghost-button" type="button">キャンセル</button>
+        <button id="loan-action-submit" class="primary-button compact" type="submit">実行する</button>
+      </div>
+    </form>
+  </dialog>
   <script src="admin.js" defer></script>
 </body>
 </html>
