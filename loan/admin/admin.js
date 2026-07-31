@@ -5,6 +5,8 @@ const state = {
   csrfToken: "",
   sessionToken: localStorage.getItem(SESSION_KEY) ?? "",
   loans: [],
+  selectedLoan: null,
+  selectedAction: null,
 };
 const $ = (selector) => document.querySelector(selector);
 
@@ -105,6 +107,69 @@ function showMessage(message, success = false) {
   if (success) box.classList.add("success");
 }
 
+function createLoanActions(loan) {
+  const container = document.createElement("div");
+  container.className = "loan-actions";
+  if (loan.status === "paid") {
+    const complete = document.createElement("span");
+    complete.className = "sync-badge confirmed";
+    complete.textContent = "操作不要";
+    container.append(complete);
+    return container;
+  }
+  if (["dispatching", "repayment_pending"].includes(loan.status)) {
+    const processing = document.createElement("span");
+    processing.className = "sync-badge waiting";
+    processing.textContent = "Minecraft処理中";
+    container.append(processing);
+    return container;
+  }
+  if (loan.currentAmount > 1) {
+    const reduction = document.createElement("button");
+    reduction.type = "button";
+    reduction.className = "loan-action-button";
+    reduction.textContent = "減額";
+    reduction.addEventListener("click", () => openLoanAction("reduction", loan));
+    container.append(reduction);
+  }
+  const deletion = document.createElement("button");
+  deletion.type = "button";
+  deletion.className = "loan-action-button delete";
+  deletion.textContent = "削除";
+  deletion.addEventListener("click", () => openLoanAction("deletion", loan));
+  container.append(deletion);
+  return container;
+}
+
+function openLoanAction(action, loan) {
+  state.selectedAction = action;
+  state.selectedLoan = loan;
+  const dialog = $("#loan-action-dialog");
+  const isDeletion = action === "deletion";
+  dialog.classList.toggle("delete-mode", isDeletion);
+  $("#loan-action-eyebrow").textContent = isDeletion ? "DELETE LOAN" : "REDUCE LOAN";
+  $("#loan-action-title").textContent = isDeletion ? "借金を削除" : "借金を減額";
+  $("#loan-action-gamertag").textContent = `${loan.gamertag} / ${loan.discordName}`;
+  $("#loan-action-current").textContent = `${formatNumber(loan.currentAmount)} owata`;
+  $("#reduction-fields").classList.toggle("hidden", isDeletion);
+  $("#deletion-fields").classList.toggle("hidden", !isDeletion);
+  $("#reduction-new-amount").required = !isDeletion;
+  $("#deletion-confirm-gamertag").required = isDeletion;
+  $("#reduction-new-amount").max = String(Math.max(1, loan.currentAmount - 1));
+  $("#reduction-new-amount").value = "";
+  $("#deletion-confirm-gamertag").value = "";
+  $("#loan-action-reason").value = "";
+  $("#loan-action-error").classList.add("hidden");
+  $("#loan-action-submit").textContent = isDeletion ? "この借金を削除する" : "この金額へ減額する";
+  dialog.showModal();
+}
+
+function closeLoanAction() {
+  $("#loan-action-dialog").close();
+  state.selectedAction = null;
+  state.selectedLoan = null;
+}
+
 function renderTable() {
   const filter = $("#status-filter").value;
   const query = $("#loan-search").value.trim().toLocaleLowerCase("ja-JP");
@@ -141,6 +206,7 @@ function renderTable() {
         : loan.daysRemaining === null
           ? "未送金"
           : `${loan.daysRemaining}日`,
+      createLoanActions(loan),
     ];
     values.forEach((value, index) => {
       const td = document.createElement("td");
@@ -243,6 +309,48 @@ $("#logout-button").addEventListener("click", async () => {
 });
 $("#status-filter").addEventListener("change", renderTable);
 $("#loan-search").addEventListener("input", renderTable);
+$("#loan-action-close").addEventListener("click", closeLoanAction);
+$("#loan-action-cancel").addEventListener("click", closeLoanAction);
+$("#loan-action-dialog").addEventListener("cancel", (event) => {
+  event.preventDefault();
+  closeLoanAction();
+});
+$("#loan-action-form").addEventListener("submit", async (event) => {
+  event.preventDefault();
+  const loan = state.selectedLoan;
+  const action = state.selectedAction;
+  if (!loan || !action) return;
+  const submit = $("#loan-action-submit");
+  const errorBox = $("#loan-action-error");
+  submit.disabled = true;
+  errorBox.classList.add("hidden");
+  try {
+    const reason = $("#loan-action-reason").value.trim();
+    const data = action === "reduction"
+      ? await api(`/api/admin/loans/${loan.id}/reduction`, {
+          method: "PATCH",
+          body: {
+            newAmount: Number($("#reduction-new-amount").value),
+            reason,
+          },
+        })
+      : await api(`/api/admin/loans/${loan.id}`, {
+          method: "DELETE",
+          body: {
+            confirmGamertag: $("#deletion-confirm-gamertag").value,
+            reason,
+          },
+        });
+    closeLoanAction();
+    showMessage(data.message, true);
+    await loadDashboard();
+  } catch (error) {
+    errorBox.textContent = error.message;
+    errorBox.classList.remove("hidden");
+  } finally {
+    submit.disabled = false;
+  }
+});
 
 loadDashboard();
 setInterval(loadDashboard, 30_000);

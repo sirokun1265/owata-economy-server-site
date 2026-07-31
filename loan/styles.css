@@ -455,7 +455,7 @@ footer a { color: var(--green); }
 }
 .table-toolbar { display: grid; grid-template-columns: 220px minmax(220px, 420px); gap: 12px; margin-bottom: 12px; }
 .loan-table-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 16px; background: var(--panel); }
-.loan-table { width: 100%; min-width: 1120px; border-collapse: collapse; }
+.loan-table { width: 100%; min-width: 1280px; border-collapse: collapse; }
 .loan-table th, .loan-table td { padding: 17px 16px; text-align: left; border-bottom: 1px solid var(--line); }
 .loan-table th { color: var(--muted); font-size: 11px; font-weight: 600; }
 .loan-table td { font-size: 13px; }
@@ -475,6 +475,80 @@ footer a { color: var(--green); }
 .underground-row { background: rgba(255, 93, 102, .035); }
 .empty-message { text-align: center; color: var(--muted); padding: 42px; }
 #admin-message { margin: 16px 0 0; }
+.loan-actions { display: flex; gap: 7px; min-width: 150px; }
+.loan-action-button {
+  border: 1px solid var(--line);
+  border-radius: 9px;
+  background: rgba(24, 230, 111, .07);
+  color: var(--ink);
+  padding: 8px 10px;
+  cursor: pointer;
+  font-size: 10px;
+  font-weight: 900;
+}
+.loan-action-button:hover { border-color: var(--green); }
+.loan-action-button.delete {
+  border-color: rgba(255, 93, 102, .34);
+  background: rgba(255, 93, 102, .08);
+  color: #ffd1d4;
+}
+.loan-action-dialog {
+  width: min(520px, calc(100% - 24px));
+  max-height: calc(100dvh - 32px);
+  border: 1px solid rgba(24, 230, 111, .42);
+  border-radius: 20px;
+  padding: 0;
+  background: #071a12;
+  color: var(--ink);
+  box-shadow: 0 32px 100px rgba(0, 0, 0, .72);
+}
+.loan-action-dialog::backdrop { background: rgba(1, 10, 6, .82); backdrop-filter: blur(5px); }
+.loan-action-dialog form { position: relative; display: grid; gap: 18px; padding: 30px; }
+.loan-action-dialog h2 { margin: 0; font-size: clamp(30px, 8vw, 42px); }
+.dialog-close {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  width: 38px;
+  height: 38px;
+  border: 1px solid var(--line);
+  border-radius: 50%;
+  background: transparent;
+  color: var(--ink);
+  cursor: pointer;
+  font-size: 22px;
+}
+.action-target {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 14px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: rgba(24, 230, 111, .045);
+}
+.action-target span { color: var(--muted); }
+.action-target strong { color: var(--yellow); }
+.dialog-reason { display: grid; gap: 8px; }
+.dialog-reason span { color: var(--muted); font-size: 12px; }
+.dialog-reason textarea {
+  width: 100%;
+  resize: vertical;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: #061710;
+  color: var(--ink);
+  padding: 13px;
+}
+.dialog-note, .dialog-warning { margin: -6px 0 0; color: var(--muted); font-size: 11px; line-height: 1.7; }
+.dialog-warning { color: #ffd1d4; }
+.dialog-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.loan-action-dialog.delete-mode { border-color: rgba(255, 93, 102, .5); }
+.loan-action-dialog.delete-mode #loan-action-submit {
+  background: var(--red);
+  color: white;
+  box-shadow: none;
+}
 
 @media (max-width: 900px) {
   .hero { grid-template-columns: 1fr; gap: 46px; padding-top: 58px; }
@@ -502,4 +576,6 @@ footer a { color: var(--green); }
   .dashboard-actions { width: 100%; flex-direction: column; }
   .summary-grid, .table-toolbar { grid-template-columns: 1fr; }
   .admin-main { width: min(100% - 24px, 1260px); }
+  .loan-action-dialog form { padding: 26px 18px 20px; }
+  .dialog-actions { grid-template-columns: 1fr; }
 }
