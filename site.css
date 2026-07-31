@@ -362,6 +362,28 @@ video {
   transform: translateX(120%);
 }
 
+.button-loan {
+  border-color: rgba(255, 216, 74, 0.82);
+  background: #ffd84a;
+  color: #152015;
+  box-shadow: 7px 7px 0 rgba(255, 216, 74, 0.15);
+}
+
+.button-loan:hover {
+  background: #ffe783;
+}
+
+.button-loan > span:first-child {
+  display: grid;
+  width: 22px;
+  height: 22px;
+  place-items: center;
+  border-radius: 50%;
+  background: #152015;
+  color: #ffd84a;
+  font-family: Consolas, monospace;
+}
+
 .live-map-dot {
   position: relative;
   z-index: 1;

@@ -1,0 +1,218 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="dark">
+  <title>オワタ経済サーバー公式｜借金申請</title>
+  <meta name="description" content="オワタ経済サーバー公式の借金申請・返済案内ページです。">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; connect-src https://owata-credit.itoutubasa1265.chatgpt.site; img-src 'self' data:; style-src 'self'; script-src 'self'; object-src 'none'; base-uri 'none'; form-action 'self'">
+  <meta property="og:title" content="OWATA CREDIT｜借金申請">
+  <meta property="og:description" content="オワタ経済サーバー公式の借金申請・返済案内">
+  <meta property="og:image" content="https://sirokun1265.github.io/owata-economy-server-site/loan/og.png">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="ambient ambient-one" aria-hidden="true"></div>
+  <div class="ambient ambient-two" aria-hidden="true"></div>
+
+  <header class="site-header">
+    <a class="brand" href="./" aria-label="オワタ経済サーバー公式借金窓口 トップ">
+      <span class="brand-mark brand-logo"><img src="owata-logo.png" alt=""></span>
+      <span>
+        <strong>オワタ経済サーバー</strong>
+        <small>公式借金・返済窓口 / OWATA CREDIT</small>
+      </span>
+    </a>
+    <span class="secure-badge"><i></i>スマホ対応・暗号化通信</span>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="hero-copy">
+        <div class="owata-official">
+          <img src="owata-logo.png" alt="オワタ経済サーバーのアイコン">
+          <span>
+            <small>MINECRAFT BEDROCK ECONOMY SERVER</small>
+            <strong>オワタ経済サーバー　公式サービス</strong>
+          </span>
+        </div>
+        <p class="eyebrow">OWATA ECONOMY / OFFICIAL LOAN DESK</p>
+        <h1>オワタの経済を、<br><em>返せる計画</em>で動かそう。</h1>
+        <p class="lead">
+          パチンコの遊技資金から店舗・鉄道の事業資金まで。
+          ゲーム内通貨「owata」をWebで申請し、Minecraftの返済ブロックから返済する、
+          オワタ経済サーバー専用システムです。
+        </p>
+        <div class="hero-metrics" aria-label="利用条件">
+          <div><b>5%</b><span>1日あたり</span></div>
+          <div><b>50%</b><span>10日分の利息</span></div>
+          <div><b>20日</b><span>返済期限</span></div>
+        </div>
+      </div>
+
+      <aside class="terminal-card">
+        <div class="terminal-top">
+          <span><i></i>APPLICATION TERMINAL</span>
+          <span id="connection-status">接続確認中</span>
+        </div>
+
+        <div id="guest-view">
+          <div class="tabs" role="tablist" aria-label="アカウント操作">
+            <button id="register-tab" class="tab active" type="button" role="tab" aria-selected="true">新規登録</button>
+            <button id="login-tab" class="tab" type="button" role="tab" aria-selected="false">ログイン</button>
+          </div>
+
+          <form id="register-form" class="form-stack">
+            <label>
+              <span>Minecraft ゲーマータグ</span>
+              <input name="gamertag" maxlength="32" autocomplete="username" required placeholder="例：OWASERVER">
+            </label>
+            <label>
+              <span>Discord名</span>
+              <input name="discordName" maxlength="64" required placeholder="例：owata_user">
+            </label>
+            <div class="field-grid">
+              <label>
+                <span>パスワード</span>
+                <input name="password" type="password" maxlength="8" pattern="[A-Za-z0-9]{1,8}" autocomplete="new-password" required placeholder="半角英数字・8文字以内">
+              </label>
+              <label>
+                <span>確認</span>
+                <input name="passwordConfirmation" type="password" maxlength="8" pattern="[A-Za-z0-9]{1,8}" autocomplete="new-password" required placeholder="もう一度入力">
+              </label>
+            </div>
+            <p class="field-note">パスワードは1～8文字の半角英数字。保存時は暗号学的にハッシュ化されます。</p>
+            <button class="primary-button" type="submit">登録して申請へ進む <span>→</span></button>
+          </form>
+
+          <form id="login-form" class="form-stack hidden">
+            <label>
+              <span>Minecraft ゲーマータグ</span>
+              <input name="gamertag" maxlength="32" autocomplete="username" required>
+            </label>
+            <label>
+              <span>パスワード</span>
+              <input name="password" type="password" maxlength="8" pattern="[A-Za-z0-9]{1,8}" autocomplete="current-password" required>
+            </label>
+            <button class="primary-button" type="submit">ログイン <span>→</span></button>
+          </form>
+        </div>
+
+        <div id="account-view" class="hidden">
+          <div class="account-strip">
+            <div>
+              <span>登録ゲーマータグ</span>
+              <strong id="account-gamertag">-</strong>
+              <small id="account-discord">-</small>
+            </div>
+            <button id="logout-button" class="ghost-button" type="button">ログアウト</button>
+          </div>
+
+          <section id="loan-application">
+            <h2>借入額を入力</h2>
+            <form id="loan-form" class="form-stack">
+              <label class="amount-field">
+                <span>借入希望額</span>
+                <div><input name="amount" type="number" min="1" max="10000000" step="1" value="100000" required><b>owata</b></div>
+              </label>
+              <div id="loan-preview" class="loan-preview">
+                <span>20日目の返済額</span>
+                <strong>200,000 owata</strong>
+              </div>
+              <label class="check-row consent-card">
+                <input id="accepted-terms" name="acceptedTerms" type="checkbox" required aria-describedby="terms-consent-help">
+                <span>
+                  <strong>利用規約に同意する</strong>
+                  <small>利息・20日の返済期限・期限超過時の地下労働を含む<a href="#terms">利用規約全文</a>を確認しました。</small>
+                </span>
+              </label>
+              <p id="terms-consent-help" class="consent-help">チェックを入れるまで借金は申し込めません。</p>
+              <button id="loan-submit-button" class="primary-button danger-button" type="submit" disabled>規約に同意して借金を申請する <span>→</span></button>
+            </form>
+          </section>
+
+          <section id="loan-status" class="hidden">
+            <div class="status-heading">
+              <span id="loan-status-badge" class="status-badge">確認中</span>
+              <span id="loan-days">-</span>
+            </div>
+            <p>現在の返済必要額</p>
+            <strong id="loan-current-amount" class="large-amount">-</strong>
+            <dl class="loan-details">
+              <div><dt>借入元金</dt><dd id="loan-principal">-</dd></div>
+              <div><dt>借入日</dt><dd id="loan-start">-</dd></div>
+              <div><dt>返済期限</dt><dd id="loan-due">-</dd></div>
+            </dl>
+            <p id="loan-guidance" class="status-guidance"></p>
+          </section>
+
+          <section id="loan-receipt" class="loan-receipt hidden" aria-live="polite">
+            <p class="receipt-kicker">OWATA LOAN RECEIPT</p>
+            <h2>お借入れありがとうございます</h2>
+            <p id="receipt-status" class="receipt-status">Minecraftへの反映を待っています。</p>
+            <dl>
+              <div><dt>Web申請日時</dt><dd id="receipt-requested">-</dd></div>
+              <div><dt>Minecraft反映日時</dt><dd id="receipt-reflected">-</dd></div>
+              <div><dt>返済日</dt><dd id="receipt-due">-</dd></div>
+              <div><dt>金利</dt><dd id="receipt-rate">-</dd></div>
+              <div><dt>20日間借りた場合</dt><dd id="receipt-maximum">-</dd></div>
+            </dl>
+            <p class="receipt-support">ご質問はオワタ経済サーバー運営までお問い合わせください。</p>
+          </section>
+        </div>
+
+        <p id="message-box" class="message-box hidden" role="status"></p>
+      </aside>
+    </section>
+
+    <section class="terms-section" id="terms">
+      <div class="section-title">
+        <p class="eyebrow">OWATA OFFICIAL TERMS / 利用規約</p>
+        <h2>オワタ経済サーバーで借りる前に、必ず確認してください。</h2>
+      </div>
+      <div class="terms-grid">
+        <article>
+          <span>01</span>
+          <h3>利息は1日単位</h3>
+          <p>元金に対して1日5%。10日で50%、20日で100%の利息です。端数は切り上げます。</p>
+        </article>
+        <article>
+          <span>02</span>
+          <h3>返済期限は20日</h3>
+          <p>送金がMinecraft内で完了した時点を借入開始日とし、その20日後を返済期限とします。</p>
+        </article>
+        <article class="warning-card">
+          <span>03</span>
+          <h3>期限超過は地下労働</h3>
+          <p>20日を超えると運営画面で地下労働対象として表示されます。利息は20日分で固定されます。</p>
+        </article>
+        <article>
+          <span>04</span>
+          <h3>借金は1件まで</h3>
+          <p>未返済・送金待ち・確認中の借金がある間は、同じゲーマータグやDiscord名で重複申請できません。</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="flow-section">
+      <div class="section-title">
+        <p class="eyebrow">HOW IT WORKS</p>
+        <h2>申請はWeb、返済はMinecraft。</h2>
+      </div>
+      <ol class="flow-list">
+        <li><b>1</b><div><strong>アカウント登録</strong><span>ゲーマータグ・Discord名・パスワードを登録</span></div></li>
+        <li><b>2</b><div><strong>Webで借金申請</strong><span>重複を確認して送金待ちに登録</span></div></li>
+        <li><b>3</b><div><strong>Minecraftへ送金</strong><span>ログイン中の本人へmoneyスコアを加算</span></div></li>
+        <li><b>4</b><div><strong>返済ブロックで完済</strong><span>ボタンまたは感圧板から本人確認して全額返済</span></div></li>
+      </ol>
+    </section>
+  </main>
+
+  <footer>
+    <span>OWATA CREDIT SYSTEM / OFFICIAL</span>
+    <a href="admin/">運営画面</a>
+  </footer>
+  <script src="app.js" defer></script>
+</body>
+</html>
