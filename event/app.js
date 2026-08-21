@@ -31,11 +31,73 @@
     return rows.map((p) => `<div class="participant"><span>${pvp ? `<i class="team-dot team-${esc(p.team || "red")}"></i>` : ""}${esc(p.player || p.name)}</span>${pvp ? `<small>${p.team === "white" ? "白" : "赤"}</small>` : ""}</div>`).join("");
   }
 
-  function bracketHtml(matches) {
+  function roundLabel(round, maxRound) {
+    if (round === maxRound) return "決勝";
+    if (round === maxRound - 1) return "準決勝";
+    return `${round}回戦`;
+  }
+
+  function matchHtml(match) {
+    return `<article class="match ${esc(match.status)}" data-match-id="${esc(match.id)}" data-source-a="${esc(match.sourceA || "")}" data-source-b="${esc(match.sourceB || "")}"><div class="player-row ${match.winner === match.playerA ? "winner" : ""}"><span>${esc(match.playerA || "未定")}</span>${match.winner === match.playerA ? "勝" : ""}</div><div class="player-row ${match.winner === match.playerB ? "winner" : ""}"><span>${esc(match.playerB || "未定")}</span>${match.winner === match.playerB ? "勝" : ""}</div>${match.reason ? `<small>${esc(match.reason)}</small>` : ""}</article>`;
+  }
+
+  function bracketHtml(matches, champion) {
     if (!matches?.length) return '<div class="empty">組み合わせ作成前です</div>';
     const rounds = new Map();
-    matches.forEach((m) => { if (!rounds.has(m.round)) rounds.set(m.round, []); rounds.get(m.round).push(m); });
-    return [...rounds.entries()].map(([round, list]) => `<div class="round"><div class="round-title">ROUND ${round}</div>${list.map((m) => `<article class="match ${esc(m.status)}"><div class="player-row ${m.winner === m.playerA ? "winner" : ""}"><span>${esc(m.playerA || "未定")}</span>${m.winner === m.playerA ? "勝" : ""}</div><div class="player-row ${m.winner === m.playerB ? "winner" : ""}"><span>${esc(m.playerB || "未定")}</span>${m.winner === m.playerB ? "勝" : ""}</div>${m.reason ? `<small>${esc(m.reason)}</small>` : ""}</article>`).join("")}</div>`).join("");
+    matches.forEach((match) => {
+      const round = Number(match.round) || 1;
+      if (!rounds.has(round)) rounds.set(round, []);
+      rounds.get(round).push(match);
+    });
+    rounds.forEach((list) => list.sort((a, b) => (Number(a.slot) || 0) - (Number(b.slot) || 0)));
+    const roundNumbers = [...rounds.keys()].sort((a, b) => a - b);
+    const maxRound = Math.max(...roundNumbers);
+    const baseColumns = Math.max(1, rounds.get(roundNumbers[0])?.length || 1);
+    const minWidth = Math.max(720, baseColumns * 210);
+    const levels = roundNumbers.slice().reverse().map((round) => {
+      const span = Math.max(1, 2 ** (round - 1));
+      const slots = rounds.get(round).map((match) => {
+        const start = (Number(match.slot) || 0) * span + 1;
+        return `<div class="bracket-slot" style="grid-column:${start} / span ${span}">${matchHtml(match)}</div>`;
+      }).join("");
+      return `<section class="bracket-level" data-round="${round}" style="--level-columns:${baseColumns}"><h4>${roundLabel(round, maxRound)}</h4><div class="bracket-level-grid">${slots}</div></section>`;
+    }).join("");
+    return `<div class="bracket-scroll"><div class="bracket-tree" style="--bracket-columns:${baseColumns};--bracket-min-width:${minWidth}px"><svg class="bracket-lines" aria-hidden="true"></svg><div class="champion-node"><span>優勝</span><strong>${esc(champion || "未決定")}</strong></div>${levels}</div></div>`;
+  }
+
+  function drawBracketConnections() {
+    const tree = document.querySelector("#pvpBracket .bracket-tree");
+    const svg = tree?.querySelector(".bracket-lines");
+    if (!tree || !svg) return;
+    const treeRect = tree.getBoundingClientRect();
+    const width = tree.scrollWidth;
+    const height = tree.scrollHeight;
+    svg.setAttribute("viewBox", `0 0 ${width} ${height}`);
+    svg.setAttribute("width", width);
+    svg.setAttribute("height", height);
+    const point = (element, edge) => {
+      const rect = element.getBoundingClientRect();
+      return { x: rect.left - treeRect.left + rect.width / 2, y: rect[edge] - treeRect.top };
+    };
+    const paths = [];
+    tree.querySelectorAll(".match").forEach((parent) => {
+      const parentPoint = point(parent, "bottom");
+      [parent.dataset.sourceA, parent.dataset.sourceB].filter(Boolean).forEach((sourceId) => {
+        const source = tree.querySelector(`.match[data-match-id="${CSS.escape(sourceId)}"]`);
+        if (!source) return;
+        const sourcePoint = point(source, "top");
+        const middleY = parentPoint.y + (sourcePoint.y - parentPoint.y) / 2;
+        paths.push(`<path d="M ${parentPoint.x} ${parentPoint.y} V ${middleY} H ${sourcePoint.x} V ${sourcePoint.y}"/>`);
+      });
+    });
+    const finalMatch = tree.querySelector(".bracket-level .match");
+    const championNode = tree.querySelector(".champion-node");
+    if (finalMatch && championNode) {
+      const from = point(championNode, "bottom");
+      const to = point(finalMatch, "top");
+      paths.push(`<path class="champion-line" d="M ${from.x} ${from.y} V ${to.y}"/>`);
+    }
+    svg.innerHTML = paths.join("");
   }
 
   function heatsHtml(heats) {
@@ -53,7 +115,8 @@
     $("pvpChampion").textContent = state.pvp?.champion || "未決定";
     $("pvpStatus").textContent = statusText(state.events?.pvp);
     $("pvpParticipants").innerHTML = participantsHtml(pvpPeople, true);
-    $("pvpBracket").innerHTML = bracketHtml(state.pvp?.matches || []);
+    $("pvpBracket").innerHTML = bracketHtml(state.pvp?.matches || [], state.pvp?.champion);
+    requestAnimationFrame(drawBracketConnections);
     $("boatCount").textContent = `${boatPeople.length}人`;
     $("boatChampion").textContent = state.boat?.champion || "未決定";
     $("boatStatus").textContent = statusText(state.events?.boat);
@@ -70,5 +133,10 @@
     document.querySelectorAll(".tab").forEach((b) => b.classList.toggle("active", b === button));
     document.querySelectorAll(".panel").forEach((p) => p.classList.toggle("active", p.id === `${button.dataset.tab}Panel`));
   }));
+  let resizeTimer;
+  window.addEventListener("resize", () => {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(drawBracketConnections, 100);
+  });
   refresh(); setInterval(refresh, pollMs);
 })();
