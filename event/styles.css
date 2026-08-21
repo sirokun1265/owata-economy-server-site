@@ -23,4 +23,9 @@
 .bracket-tree .match.active{border-color:var(--green);box-shadow:0 0 0 2px rgba(28,182,93,.12)}
 .bracket-tree .player-row{display:flex;justify-content:space-between;gap:12px;padding:4px;min-width:0}
 .bracket-tree .player-row span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.boat-tree .boat-final-level .match{width:min(240px,calc(100% - 10px));border-left-color:var(--green)}
+.boat-tree .boat-heat{min-height:126px;display:flex;flex-direction:column;justify-content:center}
+.boat-tree .boat-group-label{text-align:center;color:var(--green-dark);font-size:.76rem;font-weight:900;margin-bottom:7px}
+.boat-tree .bracket-slot{flex-direction:column;align-items:center}
+.boat-tree .boat-qualifier-level .bracket-level-grid{align-items:start}
 @media(max-width:820px){.bracket-tree{gap:28px;padding-inline:10px}.bracket-card{padding-left:12px;padding-right:12px}}

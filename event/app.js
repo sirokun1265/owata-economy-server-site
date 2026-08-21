@@ -65,8 +65,8 @@
     return `<div class="bracket-scroll"><div class="bracket-tree" style="--bracket-columns:${baseColumns};--bracket-min-width:${minWidth}px"><svg class="bracket-lines" aria-hidden="true"></svg><div class="champion-node"><span>優勝</span><strong>${esc(champion || "未決定")}</strong></div>${levels}</div></div>`;
   }
 
-  function drawBracketConnections() {
-    const tree = document.querySelector("#pvpBracket .bracket-tree");
+  function drawTreeConnections(rootSelector) {
+    const tree = document.querySelector(`${rootSelector} .bracket-tree`);
     const svg = tree?.querySelector(".bracket-lines");
     if (!tree || !svg) return;
     const treeRect = tree.getBoundingClientRect();
@@ -82,7 +82,8 @@
     const paths = [];
     tree.querySelectorAll(".match").forEach((parent) => {
       const parentPoint = point(parent, "bottom");
-      [parent.dataset.sourceA, parent.dataset.sourceB].filter(Boolean).forEach((sourceId) => {
+      const sourceIds = parent.dataset.sourceIds ? parent.dataset.sourceIds.split(",").filter(Boolean) : [parent.dataset.sourceA, parent.dataset.sourceB].filter(Boolean);
+      sourceIds.forEach((sourceId) => {
         const source = tree.querySelector(`.match[data-match-id="${CSS.escape(sourceId)}"]`);
         if (!source) return;
         const sourcePoint = point(source, "top");
@@ -100,9 +101,29 @@
     svg.innerHTML = paths.join("");
   }
 
-  function heatsHtml(heats) {
+  function drawBracketConnections() {
+    drawTreeConnections("#pvpBracket");
+    drawTreeConnections("#boatHeats");
+  }
+
+  function boatHeatHtml(heat, final = false) {
+    const rows = heat.participants?.length
+      ? heat.participants.map((player) => `<div class="player-row ${heat.result?.[0] === player ? "winner" : ""}"><span>${esc(player)}</span>${heat.result?.[0] === player ? "1位" : heat.result?.includes(player) ? `${heat.result.indexOf(player) + 1}位` : ""}</div>`).join("")
+      : '<div class="player-row"><span>予選結果待ち</span></div>';
+    return `<article class="match boat-heat ${esc(heat.status)}" data-match-id="boat-${esc(heat.id)}"${final ? ` data-source-ids="${esc(heat.sourceIds || "")}"` : ""}>${rows}</article>`;
+  }
+
+  function heatsHtml(heats, champion) {
     if (!heats?.length) return '<div class="empty">組み合わせ作成前です</div>';
-    return heats.map((h) => `<article class="heat"><h4>第${esc(h.id)}組</h4><div>${h.participants.map(esc).join(" / ")}</div>${h.result?.length ? `<div class="result">結果: ${h.result.map((p, i) => `${i + 1}位 ${esc(p)}`).join("・")}</div>` : '<small>結果待ち</small>'}</article>`).join("");
+    const qualifiers = heats.filter((h) => Number(h.round) === 1);
+    const storedFinal = heats.find((h) => Number(h.round) === 2);
+    const final = storedFinal || (qualifiers.length === 1 ? qualifiers[0] : { id: "final", round: 2, participants: [], result: [], status: "pending" });
+    const columns = Math.max(1, qualifiers.length);
+    const finalSourceIds = Number(final?.round) === 2 ? qualifiers.map((h) => `boat-${h.id}`).join(",") : "";
+    const finalMarkup = final ? boatHeatHtml({ ...final, sourceIds: finalSourceIds }, Number(final.round) === 2) : "";
+    const qualifierMarkup = Number(final?.round) === 2 ? qualifiers.map((heat, index) => `<div class="bracket-slot" style="grid-column:${index + 1}"><div class="boat-group-label">予選 第${index + 1}組</div>${boatHeatHtml(heat)}</div>`).join("") : "";
+    const minWidth = Math.max(680, columns * 220);
+    return `<div class="bracket-scroll"><div class="bracket-tree boat-tree" style="--bracket-columns:${columns};--bracket-min-width:${minWidth}px"><svg class="bracket-lines" aria-hidden="true"></svg><div class="champion-node"><span>優勝</span><strong>${esc(champion || "未決定")}</strong></div><section class="bracket-level boat-final-level"><h4>決勝（予選各組1位）</h4><div class="bracket-level-grid" style="--level-columns:${columns}"><div class="bracket-slot" style="grid-column:1 / span ${columns}">${finalMarkup}</div></div></section>${qualifierMarkup ? `<section class="bracket-level boat-qualifier-level"><h4>予選（各組3人・1位が決勝進出）</h4><div class="bracket-level-grid" style="--level-columns:${columns}">${qualifierMarkup}</div></section>` : ""}</div></div>`;
   }
 
   function render() {
@@ -121,7 +142,8 @@
     $("boatChampion").textContent = state.boat?.champion || "未決定";
     $("boatStatus").textContent = statusText(state.events?.boat);
     $("boatParticipants").innerHTML = participantsHtml(boatPeople);
-    $("boatHeats").innerHTML = heatsHtml(state.boat?.heats || []);
+    $("boatHeats").innerHTML = heatsHtml(state.boat?.heats || [], state.boat?.champion);
+    requestAnimationFrame(drawBracketConnections);
     $("lastUpdated").textContent = `最終更新: ${fmt(state.lastUpdated)}`;
   }
 
