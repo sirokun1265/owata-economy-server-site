@@ -1,4 +1,4 @@
 window.OWATA_EVENT_CONFIG = {
-  API_BASE_URL: "https://personnel-kevin-plate-gentleman.trycloudflare.com",
+  API_BASE_URL: "https://communicate-tiger-plaza-renewable.trycloudflare.com",
   POLL_INTERVAL_MS: 2500
 };
