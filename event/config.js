@@ -1,4 +1,4 @@
 window.OWATA_EVENT_CONFIG = {
-  API_BASE_URL: "https://glance-ceo-candles-playlist.trycloudflare.com",
+  API_BASE_URL: "https://senators-ross-interface-but.trycloudflare.com",
   POLL_INTERVAL_MS: 2500
 };
